@@ -1,6 +1,3 @@
-# Taps
-tap "homebrew/cask-fonts"
-
 # ── Languages ─────────────────────────────────────────────
 brew "go"
 brew "node"
