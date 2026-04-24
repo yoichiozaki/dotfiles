@@ -6,7 +6,7 @@
 	pager = delta
 	editor = vim
 	autocrlf = input
-	excludesfile = /Users/yoichozaki/.gitignore_global
+	excludesfile = ~/.gitignore_global
 
 [delta]
 	navigate = true
