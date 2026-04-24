@@ -70,6 +70,7 @@ brew "redis"          # Redis client tools
 cask "ghostty"        # terminal
 cask "cursor"         # AI editor
 cask "claude"         # Claude Desktop
+cask "copilot-cli"    # GitHub Copilot CLI
 cask "docker"         # Docker Desktop
 cask "visual-studio-code"
 cask "rectangle"      # window management
