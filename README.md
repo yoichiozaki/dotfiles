@@ -71,6 +71,17 @@ dotfiles/
     └── tmux/tmux.conf
 ```
 
+## Manual settings (not automated)
+
+These require manual setup via System Settings after installation.
+
+**Screenshot shortcuts** (System Settings → Keyboard → Keyboard Shortcuts → Screenshots)
+| Key | Action |
+|-----|--------|
+| `Cmd+Shift+S` | Copy selected area to clipboard |
+
+---
+
 ## Key bindings
 
 ### Shell
