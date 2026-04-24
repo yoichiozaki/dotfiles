@@ -1,0 +1,42 @@
+# Font
+font-family = "Hack Nerd Font"
+font-size = 16
+
+# Theme (Catppuccin Mocha)
+theme = Catppuccin Mocha
+
+# Transparency & blur
+background-opacity = 0.92
+background-blur-radius = 20
+
+# Window padding
+window-padding-x = 12
+window-padding-y = 10
+
+# Cursor
+cursor-style = bar
+cursor-style-blink = true
+
+# Window
+macos-titlebar-style = tabs
+window-decoration = true
+confirm-close-surface = false
+
+# Shell integration
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
+
+# macOS option key as alt (useful for word navigation etc.)
+macos-option-as-alt = left
+
+# Scrollback
+scrollback-limit = 10000
+
+# Copy on select
+copy-on-select = false
+
+# Quick terminal (drop-down style)
+# Uncomment to enable:
+# quick-terminal-position = top
+# quick-terminal-screen = main
+# quick-terminal-animation-duration = 0.2

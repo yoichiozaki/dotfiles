@@ -1,0 +1,146 @@
+palette = "catppuccin_mocha"
+
+format = """
+[╭─](bold overlay1)$os$directory$git_branch$git_status$cmd_duration
+[╰─](bold overlay1)$time$character"""
+
+right_format = """${custom.docker}${custom.cpu}${custom.memory}${custom.ip}$battery"""
+
+[os]
+disabled = false
+format = "[$symbol]($style)"
+style = "bold blue"
+
+[os.symbols]
+Macos = "  "
+
+[directory]
+style = "bold cyan"
+truncation_length = 3
+truncate_to_repo = true
+read_only = " 󰌾"
+format = "[ 󰉋 $path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+symbol = " "
+style = "bold purple"
+format = "[on $symbol$branch]($style) "
+
+[git_status]
+style = "bold red"
+format = "[$all_status$ahead_behind]($style) "
+conflicted = "⚡"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕"
+untracked = "?${count}"
+stashed = "󰏗"
+modified = "!${count}"
+staged = "+${count}"
+deleted = "󰆴${count}"
+
+[cmd_duration]
+min_time = 500
+format = "[󱑃 $duration]($style) "
+style = "bold yellow"
+
+[time]
+disabled = false
+format = "[ 󰥔 $time]($style) "
+time_format = "%H:%M:%S"
+style = "bold green"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+
+[battery]
+full_symbol = "󰁹 "
+charging_symbol = "󰂄 "
+discharging_symbol = "󰂁 "
+format = "[$symbol$percentage]($style) "
+[[battery.display]]
+threshold = 20
+style = "bold red"
+[[battery.display]]
+threshold = 50
+style = "bold yellow"
+[[battery.display]]
+threshold = 100
+style = "fg:overlay1"
+
+[custom.cpu]
+command = "ps -A -o %cpu | awk -v c=$(sysctl -n hw.logicalcpu) '{s+=$1} END {printf \"%.0f%%\", s/c}'"
+when = "true"
+symbol = "󰻠 "
+style = "fg:overlay1"
+format = "[$symbol$output]($style) "
+
+[custom.memory]
+command = "vm_stat | awk '/Pages free/{f=$3+0} /Pages active/{a=$3+0} /Pages inactive/{i=$3+0} /Pages wired down/{w=$4+0} END{printf \"%.0f%%\", (1-(f/(f+a+i+w)))*100}'"
+when = "true"
+symbol = "󰍛 "
+style = "fg:overlay1"
+format = "[$symbol$output]($style) "
+
+[custom.ip]
+command = "ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo 'offline'"
+when = "true"
+symbol = "󰤨 "
+style = "fg:overlay1"
+format = "[$symbol$output]($style) "
+
+[custom.docker]
+command = "docker ps -q 2>/dev/null | wc -l | tr -d ' '"
+when = "docker info > /dev/null 2>&1"
+symbol = "󰡨 "
+style = "fg:sky"
+format = "[$symbol$output]($style) "
+
+[golang]
+symbol = " "
+format = "[${symbol}${version}]($style) "
+
+[nodejs]
+symbol = " "
+format = "[${symbol}${version}]($style) "
+
+[rust]
+symbol = " "
+format = "[${symbol}${version}]($style) "
+
+[python]
+symbol = " "
+format = "[${symbol}${version}]($style) "
+
+[zig]
+symbol = " "
+format = "[${symbol}${version}]($style) "
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
