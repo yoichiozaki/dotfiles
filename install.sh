@@ -6,36 +6,33 @@ DOTFILES="$(cd "$(dirname "$0")" && pwd)"
 echo "==> Dotfiles installer"
 echo ""
 
+# Xcode Command Line Tools
+if ! xcode-select -p &>/dev/null; then
+  echo "==> Installing Xcode Command Line Tools..."
+  xcode-select --install
+  echo "  Please complete the installation prompt, then re-run this script."
+  exit 1
+fi
+echo "  Xcode CLT: ok"
+
 # Homebrew
 if ! command -v brew &>/dev/null; then
+  echo ""
   echo "==> Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  # Apple Silicon
   if [ -f /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
 fi
 echo "  Homebrew: ok"
 
-# Packages
+# Packages via Brewfile
 echo ""
-echo "==> Installing packages..."
-brew install \
-  starship \
-  zsh-autosuggestions zsh-syntax-highlighting zsh-completions \
-  eza bat fd ripgrep fzf zoxide delta btop \
-  lazygit gh jq xh tldr mise direnv \
-  go node zig nim \
-  neovim tmux \
-  --quiet 2>/dev/null
+echo "==> Installing packages (this may take a while)..."
+brew bundle --file="$DOTFILES/Brewfile" 2>&1 | grep -E "^(Installing|Cask|Already|Error)" || true
 echo "  packages: ok"
 
-echo ""
-echo "==> Installing fonts..."
-brew install --cask font-hack-nerd-font --quiet 2>/dev/null
-echo "  Hack Nerd Font: ok"
-
-# Rust
+# Rust (via rustup, not brew)
 echo ""
 echo "==> Installing Rust..."
 if ! command -v rustc &>/dev/null; then
@@ -80,12 +77,12 @@ echo "  macOS defaults: ok"
 # Git config
 echo ""
 echo "==> Git user setup"
-if [ -z "$(git config --global user.name)" ]; then
+if [ -z "$(git config --global user.name 2>/dev/null)" ]; then
   printf "  Name: "
   read -r git_name
   git config --global user.name "$git_name"
 fi
-if [ -z "$(git config --global user.email)" ]; then
+if [ -z "$(git config --global user.email 2>/dev/null)" ]; then
   printf "  Email: "
   read -r git_email
   git config --global user.email "$git_email"
@@ -93,9 +90,13 @@ fi
 echo "  git user: $(git config --global user.name) <$(git config --global user.email)>"
 
 echo ""
-echo "Done!"
-echo ""
-echo "Next steps:"
-echo "  1. Restart your terminal (or open a new tab)"
-echo "  2. Run: gh auth login"
-echo "  3. Run: nvim  (first launch installs plugins)"
+echo "============================================"
+echo "  Done! Next steps:"
+echo "============================================"
+echo "  1. Restart terminal (or open a new tab)"
+echo "  2. gh auth login          # GitHub"
+echo "  3. nvim                   # installs plugins on first launch"
+echo "  4. Open Docker Desktop    # start Docker daemon"
+echo "  5. aws configure          # if using AWS"
+echo "  6. gcloud init            # if using GCP"
+echo "============================================"
