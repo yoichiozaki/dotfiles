@@ -82,6 +82,7 @@ cask "claude"         # Claude Desktop
 cask "copilot-cli"    # GitHub Copilot CLI
 cask "docker"         # Docker Desktop
 cask "visual-studio-code"
+cask "visual-studio-code@insiders"
 cask "rectangle"      # window management
 cask "tableplus"      # database GUI
 
