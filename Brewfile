@@ -53,6 +53,8 @@ brew "stern"          # multi-pod log tailing
 
 # ── Cloud CLIs ────────────────────────────────────────────
 brew "awscli"
+brew "azure-cli"      # az コマンド
+brew "aztfexport"     # Azure リソース → Terraform 変換
 brew "terraform"
 cask "google-cloud-sdk"
 
