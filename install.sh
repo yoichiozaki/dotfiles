@@ -66,6 +66,13 @@ link() {
 link .zshrc
 mkdir -p "$HOME/Library/Application Support/Code/User"
 ln -sf "$DOTFILES/.config/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json" && echo "  linked: VS Code settings"
+mkdir -p "$HOME/Library/Application Support/Code - Insiders/User"
+ln -sf "$DOTFILES/.config/vscode-insiders/settings.json" "$HOME/Library/Application Support/Code - Insiders/User/settings.json" && echo "  linked: VS Code Insiders settings"
+if command -v code-insiders &>/dev/null; then
+  echo "  installing VS Code Insiders extensions..."
+  xargs -L1 code-insiders --install-extension < "$DOTFILES/.config/vscode-insiders/extensions.txt" 2>/dev/null
+  echo "  extensions: ok"
+fi
 link .gitconfig
 link .gitignore_global
 link .config/ghostty/config
