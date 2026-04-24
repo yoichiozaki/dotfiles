@@ -95,6 +95,22 @@ if [ -z "$(git config --global user.email 2>/dev/null)" ]; then
 fi
 echo "  git user: $(git config --global user.name) <$(git config --global user.email)>"
 
+# Xcode
+echo ""
+echo "==> Xcode setup..."
+if ! xcodebuild -version &>/dev/null; then
+  echo "  Installing Xcode (requires Apple ID)..."
+  xcodes install --latest
+  # activate: find installed Xcode and set it
+  XCODE_PATH=$(ls /Applications/ | grep -E "^Xcode.*\.app$" | head -1)
+  if [ -n "$XCODE_PATH" ]; then
+    sudo xcode-select -s "/Applications/$XCODE_PATH"
+    echo "  Xcode activated: /Applications/$XCODE_PATH"
+  fi
+else
+  echo "  Xcode: $(xcodebuild -version | head -1) already installed"
+fi
+
 echo ""
 echo "============================================"
 echo "  Done! Next steps:"
