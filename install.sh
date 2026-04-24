@@ -64,6 +64,8 @@ link() {
 }
 
 link .zshrc
+mkdir -p "$HOME/Library/Application Support/Code/User"
+ln -sf "$DOTFILES/.config/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json" && echo "  linked: VS Code settings"
 link .gitconfig
 link .gitignore_global
 link .config/ghostty/config
