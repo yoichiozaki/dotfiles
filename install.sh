@@ -80,6 +80,9 @@ defaults write com.apple.finder AppleShowAllFiles -bool true
 defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.screencapture target clipboard
 killall SystemUIServer 2>/dev/null || true
+touch "$HOME/.hushlogin"
+chmod go-w '/opt/homebrew/share'
+chmod -R go-w '/opt/homebrew/share/zsh'
 echo "  macOS defaults: ok"
 
 # Git config
