@@ -78,6 +78,8 @@ defaults write NSGlobalDomain KeyRepeat -int 2
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
 defaults write com.apple.finder AppleShowAllFiles -bool true
 defaults write com.apple.finder ShowPathbar -bool true
+defaults write com.apple.screencapture target clipboard
+killall SystemUIServer 2>/dev/null || true
 echo "  macOS defaults: ok"
 
 # Git config
