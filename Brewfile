@@ -67,6 +67,15 @@ brew "postgresql@17"  # PostgreSQL client tools
 brew "redis"          # Redis client tools
 
 # ── GUI Apps (Casks) ──────────────────────────────────────
+# ── Swift / iOS ───────────────────────────────────────────
+brew "xcodes"         # Xcode version manager
+brew "aria2"          # xcodes の高速ダウンロードに必要
+brew "swiftformat"    # Swift formatter
+brew "swiftlint"      # Swift linter
+brew "xcbeautify"     # xcodebuild の出力を見やすく
+brew "xcodegen"       # project.yml から Xcode プロジェクト生成
+
+# ── GUI Apps (Casks) ──────────────────────────────────────
 cask "ghostty"        # terminal
 cask "cursor"         # AI editor
 cask "claude"         # Claude Desktop
