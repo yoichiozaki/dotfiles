@@ -71,6 +71,8 @@ brew "redis"          # Redis client tools
 
 # ── GUI Apps (Casks) ──────────────────────────────────────
 cask "ghostty"        # terminal
+cask "cursor"         # AI editor
+cask "claude"         # Claude Desktop
 cask "docker"         # Docker Desktop
 cask "visual-studio-code"
 cask "rectangle"      # window management

@@ -32,6 +32,12 @@ echo "==> Installing packages (this may take a while)..."
 brew bundle --file="$DOTFILES/Brewfile" 2>&1 | grep -E "^(Installing|Cask|Already|Error)" || true
 echo "  packages: ok"
 
+# npm global packages
+echo ""
+echo "==> Installing npm global packages..."
+npm install -g @anthropic-ai/claude-code @openai/codex typescript 2>/dev/null
+echo "  Claude Code, Codex, TypeScript: ok"
+
 # Rust (via rustup, not brew)
 echo ""
 echo "==> Installing Rust..."
