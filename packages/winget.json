@@ -1,6 +1,6 @@
 {
 	"$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
-	"CreationDate" : "2026-08-29T22:33:25.280-00:00",
+	"CreationDate" : "2026-08-29T22:55:22.218-00:00",
 	"Sources" : 
 	[
 		{
@@ -74,6 +74,9 @@
 				},
 				{
 					"PackageIdentifier" : "Microsoft.VCRedist.2015+.x64"
+				},
+				{
+					"PackageIdentifier" : "Microsoft.DotNet.SDK.10"
 				},
 				{
 					"PackageIdentifier" : "Microsoft.DotNet.AspNetCore.6"

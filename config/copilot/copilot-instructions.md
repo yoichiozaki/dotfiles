@@ -1,20 +1,19 @@
 # User-level Copilot instructions
 
-## ⚠️ 保留中のタスク（次回セッションで必ず先に伝えること）
+## 環境メモ
 
-**管理者権限が必要な開発環境モダン化が残っています（2026-08-29 時点）。**
+- Windows の設定は **`~\dotfiles`** で Git 管理されています（シンボリックリンク方式）。
+  `~/.gitconfig`、PowerShell プロファイル、`~/.copilot/settings.json` などは
+  すべてこのリポジトリへのリンクなので、**いつもの場所を編集すればリポジトリが更新されます**。
+  変更したら `~\dotfiles` でコミットしてください。
 
-セッション開始時、ユーザーに以下を必ずリマインドしてください:
+- ツールチェーンの更新は **管理者 PowerShell** で:
+  `& "$HOME\dotfiles\scripts\modernize-dev-env.ps1"`（冪等）
 
-> 開発環境モダン化はほぼ完了。残りは **.NET 10 LTS の導入のみ**です。
-> 実行: 管理者 PowerShell で
-> `& "$HOME\dotfiles\scripts\modernize-dev-env.ps1"`
-> （冪等。完了済みは ALREADY でスキップされます）
-> 詳細: `~\.copilot\pending-maintenance.md`
->
-> 完了済み: Rust→rustup (rustc 1.98) / PowerShell 7.6.5 / Go 1.27 / OpenJDK 21 /
-> npm 12 / uv / モダン CLI 一式 / PATH 整理 / git+delta /
-> **dotfiles 化 (`~\dotfiles`)** / Copilot の winget blocking pin
+- **`GitHub.Copilot` を winget で更新しないでください。** CLI は自己更新するため
+  winget では**ダウングレード**になります。更新は `copilot /update`。
+  （winget には blocking pin を設定済み）
 
-作業が完了したら、このセクションと `pending-maintenance.md` を削除してください。
-（メンテナンススクリプトは `~\dotfiles\scripts\` に恒久的に置いてあるので残します）
+- 既知の注意点（pyenv-win の更新機能故障 → uv 移行推奨、Hugo/FFmpeg の winget
+  相関バグ、PowerShell モジュールが OneDrive 配下にあるリスク）は
+  `~\dotfiles\README.md` に記載しています。

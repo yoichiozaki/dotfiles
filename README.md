@@ -156,3 +156,30 @@ git add -A && git commit -m "chore: update package manifests"
 - **`GitHub.Copilot` は winget で更新しないでください。**
   Copilot CLI は自己更新するため、winget のマニフェストが遅れており
   `winget upgrade` するとダウングレードになります。更新は `copilot /update` を使います。
+  事故防止のため winget に **blocking pin** を設定済みです
+  （解除する場合は `winget pin remove --id GitHub.Copilot`）。
+
+- **pyenv-win の更新機能が壊れています。**
+  `pyenv update` が `htmlfile: This command is not supported` で失敗します
+  （VBS の ActiveX が最近の Windows でブロックされるため）。
+  さらに `versions\3.13.2` の中身は実際には **3.13.15**、`versions\3.10.4` は
+  **3.10.11** で、ディレクトリ名が実態と食い違っています。
+  → 導入済みの **uv への移行を推奨**します:
+  ```powershell
+  uv python install 3.14
+  uv venv / uv sync / uv run
+  ```
+  既存プロジェクトの依存があるため pyenv 自体は残してあります。
+  同様に poetry も旧 `~\.poetry` インストーラ方式（現在は非推奨）なので、
+  `uv` か `pipx` への移行が望ましいです。
+
+- **Hugo / FFmpeg は winget が個別に特定できません。**
+  `winget list` には出るのに `winget upgrade --id <ID>` は
+  「インストール済みのパッケージが見つかりません」を返します（winget の相関バグ）。
+  更新するにはアンインストール → 再インストールが必要です。
+  また FFmpeg は winget 版と yt-dlp 版の 2 系統が PATH にあります。
+
+- **.NET 6 SDK が 3 本（6.0.202 / 6.0.203 / 6.0.428）残っています。**
+  既定は .NET 10 ですが、`global.json` で固定しているプロジェクトが
+  ありうるため自動削除はしていません。整理する場合は
+  `.\scripts\modernize-dev-env.ps1 -RemoveDuplicateDotnet6Sdks`。
