@@ -391,6 +391,39 @@ else {
     else { Add-Result 'npm' 'ALREADY' $after }
 }
 
+# --------------------------------------------------------- tidy user PATH ---
+
+# Installers (the .NET SDK in particular) append their bin directory on every
+# run, so duplicates creep back after each upgrade. De-duplicate, preserving
+# first occurrence so precedence is unchanged. Entries that do not exist are
+# KEPT: well-known dirs like ~\.dotnet\tools are created on demand.
+Write-Head 'Tidy user PATH'
+
+$rawPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+$seenPath = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+$keptPath = @()
+foreach ($entry in ($rawPath -split ';')) {
+    $trimmed = $entry.Trim()
+    if (-not $trimmed) { continue }
+    $norm = [Environment]::ExpandEnvironmentVariables($trimmed).TrimEnd('\')
+    if ($seenPath.Add($norm)) { $keptPath += $trimmed }
+}
+$newPath = $keptPath -join ';'
+$beforeCount = @($rawPath -split ';' | Where-Object { $_.Trim() }).Count
+
+if ($newPath -eq $rawPath) {
+    Add-Result 'user PATH' 'ALREADY' "$beforeCount entries, no duplicates"
+}
+elseif ($WhatIfOnly) {
+    Add-Result 'user PATH' 'WHATIF' "would go $beforeCount -> $($keptPath.Count) entries"
+}
+else {
+    $backup = Join-Path $PSScriptRoot 'user-path.backup.txt'
+    Set-Content -LiteralPath $backup -Value $rawPath -NoNewline -Encoding utf8
+    [Environment]::SetEnvironmentVariable('Path', $newPath, 'User')
+    Add-Result 'user PATH' 'OK' "$beforeCount -> $($keptPath.Count) entries (backup: user-path.backup.txt)"
+}
+
 # -------------------------------------------------------------- optional ----
 
 if ($IncludeOhMyPosh) {
