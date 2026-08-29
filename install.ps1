@@ -74,6 +74,8 @@ $Links = @(
     @{ Src = 'config\oh-my-posh\night-owl-ccusage.omp.json';       Dst = Join-Path $HOME '.config\oh-my-posh\night-owl-ccusage.omp.json' }
     @{ Src = 'config\nushell\config.nu';                           Dst = Join-Path $env:APPDATA 'nushell\config.nu' }
     @{ Src = 'config\nushell\env.nu';                              Dst = Join-Path $env:APPDATA 'nushell\env.nu' }
+    @{ Src = 'config\windows-terminal\settings.json'
+       Dst = Join-Path $env:LOCALAPPDATA 'Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json' }
 )
 
 # ------------------------------------------------------------ preconditions --

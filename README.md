@@ -74,6 +74,7 @@ dotfiles/
 | `config/copilot/copilot-instructions.md` | `~/.copilot/copilot-instructions.md` |
 | `config/oh-my-posh/night-owl-ccusage.omp.json` | `~/.config/oh-my-posh/` |
 | `config/nushell/config.nu`, `env.nu` | `%APPDATA%/nushell/` |
+| `config/windows-terminal/settings.json` | `%LOCALAPPDATA%/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/` |
 
 プロファイルの配置先は `$PROFILE` から取得します。
 このマシンでは `Documents` が OneDrive にリダイレクトされているため、
@@ -143,6 +144,26 @@ git add -A && git commit -m "chore: update package manifests"
 ---
 
 ## 注意点
+
+- **Windows Terminal の PowerShell プロファイルはパスを明示しています。**
+  winget が `Microsoft.PowerShell` を **MSI から MSIX（Store 形式）に変更**したため、
+  従来の `C:\Program Files\PowerShell\7\pwsh.exe` は**存在しません**。
+  WT の動的プロファイル（`Windows.Terminal.PowershellCore`）が旧パスを掴んだままだと
+  `エラー 2147942402 (0x80070002) 指定されたファイルが見つかりません` になります。
+
+  そこで `commandline` に**アプリ実行エイリアス**を明示しています:
+
+  ```
+  %LOCALAPPDATA%\Microsoft\WindowsApps\pwsh.exe
+  ```
+
+  MSIX の実体パスはバージョン番号を含む
+  (`...\Microsoft.PowerShell_7.6.5.0_x64__8wekyb3d8bbwe\pwsh.exe`) ため、
+  直接指定すると更新のたびに壊れます。エイリアスはバージョン非依存です。
+
+  なお Windows Terminal は設定保存時にファイルを置き換えることがあり、
+  その際シンボリックリンクが実ファイルに戻る可能性があります。
+  そうなったら `.\install.ps1` を再実行すれば復旧します（冪等）。
 
 - **シンボリックリンクには Developer Mode か管理者権限が必要**です。
   `install.ps1` は最初に判定して、足りない場合は何もせず案内を出します。
