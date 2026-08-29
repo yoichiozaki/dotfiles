@@ -1,0 +1,9 @@
+# Backups made by install.ps1 when replacing real files with symlinks
+.backup/
+
+# winget export includes exact versions; we re-export without them, but guard anyway
+*.bak
+
+# Never track machine-local git identity
+.gitconfig.local
+config/git/gitconfig.local

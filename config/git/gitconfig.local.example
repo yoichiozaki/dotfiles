@@ -1,0 +1,10 @@
+# Machine-local git settings. NOT tracked by dotfiles.
+# Copy to ~/.gitconfig.local and fill in your identity.
+
+[user]
+	name = Your Name
+	email = you@example.com
+
+# Machine-specific overrides can go here, e.g. a different editor:
+# [core]
+#	editor = "C:/Program Files/Neovim/bin/nvim.exe"

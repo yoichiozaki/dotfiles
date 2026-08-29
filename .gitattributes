@@ -1,0 +1,9 @@
+# Normalise everything to LF in the repository.
+# All consumers here (PowerShell 7, git, nushell, JSON parsers) read LF fine on
+# Windows, and pinning it keeps diffs clean when the repo is shared across OSes.
+* text=auto eol=lf
+
+# Keep these exactly as-is
+*.png binary
+*.jpg binary
+*.ico binary

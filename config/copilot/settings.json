@@ -1,0 +1,8 @@
+{
+  "logLevel": "all",
+  "model": "claude-opus-5",
+  "contextTier": "long_context",
+  "effortLevel": "max",
+  "defaultMode": "autopilot",
+  "defaultPermissionMode": "allow-all"
+}

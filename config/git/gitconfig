@@ -1,0 +1,66 @@
+# =============================================================================
+#  Shared git configuration (tracked in dotfiles)
+#
+#  Personal identity lives in ~/.gitconfig.local, which is NOT tracked, so this
+#  file is safe to publish. The include at the bottom is last on purpose:
+#  git applies values in order, so ~/.gitconfig.local always wins.
+# =============================================================================
+
+[core]
+	editor = code --wait
+	pager = delta
+	autocrlf = input
+
+[init]
+	defaultBranch = main
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true          # use n / N to jump between diff hunks
+	line-numbers = true
+	side-by-side = false
+
+[diff]
+	colorMoved = default     # moved lines get their own colour
+	algorithm = histogram
+	renames = copies
+
+[merge]
+	conflictstyle = zdiff3   # show the common ancestor in conflicts
+
+[rerere]
+	enabled = true           # remember and replay conflict resolutions
+	autoupdate = true
+
+[push]
+	autoSetupRemote = true
+	followTags = true
+
+[fetch]
+	prune = true
+	pruneTags = true
+
+[column]
+	ui = auto
+
+[branch]
+	sort = -committerdate
+
+[tag]
+	sort = -version:refname
+
+[help]
+	autocorrect = prompt
+
+[alias]
+	s = status --short --branch
+	lg = log --oneline --graph --decorate --all
+	last = log -1 --stat
+	unstage = restore --staged
+	amend = commit --amend --no-edit
+
+# Machine-local settings and identity. Keep last so it can override anything above.
+[include]
+	path = ~/.gitconfig.local
