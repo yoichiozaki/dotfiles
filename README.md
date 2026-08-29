@@ -49,7 +49,6 @@ dotfiles/
 .\scripts\modernize-dev-env.ps1              # 開発系のみ（既定）
 .\scripts\modernize-dev-env.ps1 -WhatIfOnly  # 変更せず確認だけ
 ```
-
 冪等なので何度実行しても安全です。オプションで
 `-IncludeEditors` / `-IncludeApps` / `-IncludeOhMyPosh` /
 `-RemoveDuplicateDotnet6Sdks` を追加できます。
@@ -146,6 +145,78 @@ git add -A && git commit -m "chore: update package manifests"
 
 設定を変えたときは、いつもの場所を編集するだけでリポジトリに反映されます
 （シンボリックリンクなので）。あとはコミットするだけです。
+
+---
+
+## 言語ツールチェーン
+
+**すべて専用のバージョンマネージャ経由**で管理し、素の直接インストールは避けています。
+プロジェクトごとにバージョンを固定でき、更新も一元化できるためです。
+
+| 言語 | マネージャ | 現在 | プロジェクト固定 |
+|---|---|---|---|
+| Rust | `rustup` | 1.98.0 | `rust-toolchain.toml` |
+| Python | `uv` | 3.13.15 | `uv python pin` / `.python-version` |
+| Node.js | `fnm` | 24.20.0 (LTS) | `.nvmrc` / `.node-version`（`cd` で自動切替） |
+| Nim | `choosenim` | 2.2.10 | `choosenim <ver>` |
+| Zig | `zvm` | 0.16.0 | `zvm use <ver>` |
+| MoonBit | `moonup` | 0.10.11 | `moonup pin <ver>` |
+| Go | 公式 | 1.27.0 | `go.mod` の `toolchain` 行 |
+| .NET | 公式 SDK | 10.0.400 | `global.json` |
+
+### 言語サーバ (LSP)
+
+エディタ補完のために、コンパイラとバージョンを合わせて導入しています。
+
+| | |
+|---|---|
+| `zls` 0.16.0 | **zvm が zig と同時に管理**（zls は zig とバージョン一致が必須） |
+| `nimlangserver` 1.14.0 | 公式ビルド済みバイナリ |
+| `moon-lsp` | MoonBit ツールチェーン同梱 |
+
+### パッケージマネージャ
+
+| | |
+|---|---|
+| Python | `uv`（venv・依存解決・ロック・`uv tool` によるCLI導入まで一括） |
+| Node.js | `corepack`（`package.json` の `packageManager` で pnpm/yarn を固定） |
+| Rust | `cargo` + `cargo-binstall`（ビルド済みバイナリを取得、コンパイル不要） |
+
+`poetry` は非推奨の `~/.poetry` インストーラ版が壊れていたため、
+`uv tool install poetry` で入れ直しています（隔離 venv で管理）。
+
+---
+
+## モダン CLI ツール
+
+従来コマンドの置き換え。**ビルトインの `ls` / `cat` / `ps` / `cd` は上書きしていません**
+（PowerShell オブジェクトを期待するスクリプトが壊れるため）。
+Windows に存在しない `du` / `df` / `top` のみ関数として定義しています。
+
+| 用途 | ツール | 旧来 |
+|---|---|---|
+| 検索 | `rg` (ripgrep) | grep |
+| ファイル検索 | `fd` | find |
+| 閲覧 | `bat` | cat |
+| 一覧 | `eza` (`ll`/`la`/`lt`) | ls |
+| ディレクトリ移動 | `zoxide` (`z`/`zi`) | cd |
+| 曖昧検索 | `fzf` | — |
+| シェル履歴 | `atuin` (Ctrl+R) | — |
+| ディスク使用量 | `dust` (`du`) | du |
+| ディスク空き | `duf` (`df`) | df |
+| プロセス監視 | `bottom` (`top`) | top |
+| プロセス一覧 | `procs` | ps |
+| 置換 | `sd` | sed |
+| 差分 | `delta` / `difft` | diff |
+| JSON / YAML | `jq` / `yq` | — |
+| HTTP | `xh` | curl |
+| Git TUI | `lazygit` (`lg`) | — |
+| ファイラ | `yazi` | — |
+| Markdown 表示 | `glow` | — |
+| コード統計 | `tokei` | cloc |
+| ベンチマーク | `hyperfine` | time |
+| タスクランナー | `just` | make |
+| ファイル監視 | `watchexec` | — |
 
 ---
 

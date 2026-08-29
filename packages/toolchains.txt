@@ -1,0 +1,7 @@
+rustup   stable-x86_64-pc-windows-msvc (default)
+nim      Nim Compiler Version 2.2.10 [Windows: amd64]
+zig      0.16.0
+moon     moon 0.1.20260827 (d0aaa07 2026-08-27)
+go       go version go1.27.0 windows/amd64
+dotnet   10.0.400
+python   Python 3.13.15

@@ -43,7 +43,41 @@ $py = @()
 try { $py = uv python list --only-installed 2>$null } catch { }
 $py | Set-Content -LiteralPath (Join-Path $here 'uv-python.txt') -Encoding utf8NoBOM
 
+Write-Host '  Exporting uv tools...' -ForegroundColor Cyan
+$uvt = @()
+try { $uvt = uv tool list 2>$null | Where-Object { $_ -notmatch '^\s*-' -and $_.Trim() } } catch { }
+$uvt | Set-Content -LiteralPath (Join-Path $here 'uv-tools.txt') -Encoding utf8NoBOM
+
+Write-Host '  Exporting cargo-installed tools...' -ForegroundColor Cyan
+$crates = @()
+try {
+    # `cargo install --list` prints "name vX.Y:" then indented binaries
+    $crates = cargo install --list 2>$null |
+              Where-Object { $_ -notmatch '^\s' -and $_.Trim() } |
+              ForEach-Object { ($_ -split ' ')[0] } | Sort-Object -Unique
+} catch { }
+$crates | Set-Content -LiteralPath (Join-Path $here 'cargo-tools.txt') -Encoding utf8NoBOM
+
+Write-Host '  Exporting language toolchain versions...' -ForegroundColor Cyan
+$tc = @()
+foreach ($t in @(
+    @{ n = 'rustup'; c = { rustup show active-toolchain } }
+    @{ n = 'fnm';    c = { fnm current } }
+    @{ n = 'nim';    c = { (nim --version | Select-Object -First 1) } }
+    @{ n = 'zig';    c = { zig version } }
+    @{ n = 'moon';   c = { (moon version | Select-Object -First 1) } }
+    @{ n = 'go';     c = { go version } }
+    @{ n = 'dotnet'; c = { dotnet --version } }
+    @{ n = 'python'; c = { python --version } }
+)) {
+    try { $v = (& $t.c 2>$null) -join ' '; if ($v) { $tc += "{0,-8} {1}" -f $t.n, $v.Trim() } } catch { }
+}
+$tc | Set-Content -LiteralPath (Join-Path $here 'toolchains.txt') -Encoding utf8NoBOM
+
 Write-Host ''
-Get-ChildItem $here -File -Filter '*.txt' | ForEach-Object { "   {0,-20} {1} lines" -f $_.Name, (Get-Content $_.FullName).Count }
+Get-ChildItem $here -File -Filter '*.txt' | ForEach-Object {
+    # @() so a 0- or 1-line file still exposes .Count
+    "   {0,-20} {1} lines" -f $_.Name, @(Get-Content $_.FullName -ErrorAction SilentlyContinue).Count
+}
 Get-ChildItem $here -File -Filter '*.json' | ForEach-Object { "   {0,-20} {1} bytes" -f $_.Name, $_.Length }
 Write-Host ''

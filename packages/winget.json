@@ -1,6 +1,6 @@
 {
 	"$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
-	"CreationDate" : "2026-08-29T22:55:22.218-00:00",
+	"CreationDate" : "2026-08-30T00:28:26.173-00:00",
 	"Sources" : 
 	[
 		{
@@ -91,10 +91,16 @@
 					"PackageIdentifier" : "Microsoft.VCRedist.2010.x86"
 				},
 				{
+					"PackageIdentifier" : "Atuinsh.Atuin"
+				},
+				{
 					"PackageIdentifier" : "BurntSushi.ripgrep.MSVC"
 				},
 				{
 					"PackageIdentifier" : "ByteDance.CapCut"
+				},
+				{
+					"PackageIdentifier" : "Casey.Just"
 				},
 				{
 					"PackageIdentifier" : "DenoLand.Deno"
@@ -118,10 +124,22 @@
 					"PackageIdentifier" : "Microsoft.devtunnel"
 				},
 				{
+					"PackageIdentifier" : "MikeFarah.yq"
+				},
+				{
 					"PackageIdentifier" : "JanDeDobbeleer.OhMyPosh"
 				},
 				{
 					"PackageIdentifier" : "Microsoft.OneDrive"
+				},
+				{
+					"PackageIdentifier" : "Schniz.fnm"
+				},
+				{
+					"PackageIdentifier" : "Wilfred.difftastic"
+				},
+				{
+					"PackageIdentifier" : "XAMPPRocky.Tokei"
 				},
 				{
 					"PackageIdentifier" : "Zoom.Zoom.EXE"
@@ -133,7 +151,22 @@
 					"PackageIdentifier" : "Obsidian.Obsidian"
 				},
 				{
+					"PackageIdentifier" : "bootandy.dust"
+				},
+				{
+					"PackageIdentifier" : "charmbracelet.glow"
+				},
+				{
+					"PackageIdentifier" : "chmln.sd"
+				},
+				{
+					"PackageIdentifier" : "dalance.procs"
+				},
+				{
 					"PackageIdentifier" : "dandavison.delta"
+				},
+				{
+					"PackageIdentifier" : "ducaale.xh"
 				},
 				{
 					"PackageIdentifier" : "eza-community.eza"
@@ -145,19 +178,25 @@
 					"PackageIdentifier" : "junegunn.fzf"
 				},
 				{
+					"PackageIdentifier" : "muesli.duf"
+				},
+				{
 					"PackageIdentifier" : "sharkdp.bat"
 				},
 				{
 					"PackageIdentifier" : "sharkdp.fd"
 				},
 				{
+					"PackageIdentifier" : "sharkdp.hyperfine"
+				},
+				{
+					"PackageIdentifier" : "sxyazi.yazi"
+				},
+				{
 					"PackageIdentifier" : "yt-dlp.FFmpeg"
 				},
 				{
 					"PackageIdentifier" : "yt-dlp.yt-dlp"
-				},
-				{
-					"PackageIdentifier" : "zig.zig"
 				},
 				{
 					"PackageIdentifier" : "Microsoft.VisualStudioCode.Insiders"
