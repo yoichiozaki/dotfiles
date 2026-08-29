@@ -1,6 +1,10 @@
 # Backups made by install.ps1 when replacing real files with symlinks
 .backup/
 
+# Run artefacts from scripts/ (logs, transcripts, completion markers)
+*.log
+*.done
+
 # winget export includes exact versions; we re-export without them, but guard anyway
 *.bak
 

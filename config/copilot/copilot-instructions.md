@@ -11,8 +11,11 @@
 > `& "$HOME\.copilot\maintenance\modernize-dev-env.ps1"`
 > 詳細: `~\.copilot\pending-maintenance.md`
 >
-> 残: Rust の rustup 移行 / .NET 10 LTS 追加 / OpenJDK 21 追加 / winget 開発系 10 件 / npm 本体。
-> （非昇格でできる分は 2026-08-29 に完了済み）
+> 残: .NET 10 LTS 追加 / OpenJDK 21 追加 / VC++ Redist / Azure Functions Core Tools /
+> 旧 Rust MSI 1.79 の残骸削除。
+>
+> 完了済み: Rust→rustup (rustc 1.98) / Go 1.27 / **PowerShell 7.6.5** / WSL /
+> npm 12 / Nushell / devtunnel / Copilot の winget ピン / dotfiles 化 (`~\dotfiles`)
 
 作業が完了したら、このセクションと `pending-maintenance.md`、
 `~\.copilot\maintenance\` を削除してください。

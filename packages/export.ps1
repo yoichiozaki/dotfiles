@@ -14,8 +14,12 @@ Set-StrictMode -Version Latest
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Write-Host '  Exporting winget packages...' -ForegroundColor Cyan
-winget export --output (Join-Path $here 'winget.json') `
-    --accept-source-agreements --include-versions:$false 2>&1 | Out-Null
+# NOTE: do NOT pass `--include-versions:$false` -- that is PowerShell switch
+# syntax, not winget syntax, and makes the whole command a no-op. Versions are
+# omitted by default, which is what we want so restores pick up the latest.
+winget export --output (Join-Path $here 'winget.json') --accept-source-agreements 2>&1 |
+    Where-Object { $_ -notmatch 'ソースからも利用できません|available from any source' } |
+    Out-Null
 
 Write-Host '  Exporting PowerShell modules...' -ForegroundColor Cyan
 Get-InstalledModule -ErrorAction SilentlyContinue |
