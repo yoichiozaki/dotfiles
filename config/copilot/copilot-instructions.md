@@ -16,5 +16,5 @@
 > npm 12 / uv / モダン CLI 一式 / PATH 整理 / git+delta /
 > **dotfiles 化 (`~\dotfiles`)** / Copilot の winget blocking pin
 
-作業が完了したら、このセクションと `pending-maintenance.md`、
-`~\.copilot\maintenance\` を削除してください。
+作業が完了したら、このセクションと `pending-maintenance.md` を削除してください。
+（メンテナンススクリプトは `~\dotfiles\scripts\` に恒久的に置いてあるので残します）
