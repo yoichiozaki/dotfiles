@@ -30,6 +30,9 @@ dotfiles/
 │   ├── copilot/                 # GitHub Copilot CLI 設定・指示書
 │   ├── oh-my-posh/              # プロンプトテーマ
 │   └── nushell/                 # Nushell 設定
+├── scripts/
+│   ├── modernize-dev-env.ps1    # ツールチェーンの一括更新（冪等・要管理者）
+│   └── run-elevated.ps1         # 上記を昇格して実行しログを残すラッパ
 └── packages/
     ├── export.ps1               # 現在のマシン状態を manifest に書き出す
     ├── restore.ps1              # manifest からツールを復元する
@@ -38,6 +41,28 @@ dotfiles/
     ├── npm-global.txt
     └── uv-python.txt
 ```
+
+### ツールチェーンの更新
+
+```powershell
+# 管理者 PowerShell で
+.\scripts\modernize-dev-env.ps1              # 開発系のみ（既定）
+.\scripts\modernize-dev-env.ps1 -WhatIfOnly  # 変更せず確認だけ
+```
+
+冪等なので何度実行しても安全です。オプションで
+`-IncludeEditors` / `-IncludeApps` / `-IncludeOhMyPosh` /
+`-RemoveDuplicateDotnet6Sdks` を追加できます。
+
+このスクリプトが解決している落とし穴:
+
+- **Windows Installer はマシン全体で排他**なので、winget を連続実行すると
+  後続が `1618` で落ちます。`Global\_MSIExecute` ミューテックスを監視して直列化しています。
+- **自分自身が動いている PowerShell はアンインストールしません。**
+  やると `pwsh.exe` が消えてスクリプトごと死にます（実際に踏みました）。
+- **ユーザースコープのパッケージは昇格すると触れません。**
+  検出して「非昇格で実行してください」と案内します。
+- **`GitHub.Copilot` は winget 対象外。** blocking pin を張って事故を防ぎます。
 
 ### リンク対象
 
