@@ -11,3 +11,6 @@
 # Never track machine-local git identity
 .gitconfig.local
 config/git/gitconfig.local
+
+# daily-update run logs
+scripts/logs/

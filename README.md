@@ -31,6 +31,7 @@ dotfiles/
 │   ├── oh-my-posh/              # プロンプトテーマ
 │   └── nushell/                 # Nushell 設定
 ├── scripts/
+│   ├── daily-update.ps1         # 日次自動更新（ユーザースコープ・無人実行）
 │   ├── modernize-dev-env.ps1    # ツールチェーンの一括更新（冪等・要管理者）
 │   └── run-elevated.ps1         # 上記を昇格して実行しログを残すラッパ
 └── packages/
@@ -42,7 +43,58 @@ dotfiles/
     └── uv-python.txt
 ```
 
-### ツールチェーンの更新
+### 日々の更新（自動）
+
+ユーザースコープの更新は**スケジューラで自動化済み**です。UAC が出ないものだけを対象にしているので、無人で完走します。
+
+```powershell
+.\scripts\daily-update.ps1            # 手動で今すぐ実行
+.\scripts\daily-update.ps1 -WhatIfOnly
+.\scripts\daily-update.ps1 -Install   # タスク登録（実施済み）
+.\scripts\daily-update.ps1 -Uninstall # 解除
+```
+
+タスク名 `dotfiles-daily-update`、毎日 12:30（±5 分のゆらぎ）＋
+PC が止まっていた場合に備えてログオン 10 分後にも実行。
+ログは `scripts/logs/daily-YYYY-MM-DD.log`（30 世代で自動削除）。
+
+自動更新の対象:
+
+| 対象 | 内容 |
+|---|---|
+| winget | **user スコープのみ**（machine スコープは UAC が必要なので除外） |
+| rustup | stable |
+| fnm | 最新 LTS を取得し default に設定 |
+| uv | 本体 + `uv tool`（poetry 等） |
+| npm | グローバルパッケージ |
+| cargo | `cargo-binstall` で導入した CLI |
+| user PATH | 重複除去 |
+| `packages/` | manifest を再生成（差分は `git diff` で見える） |
+
+**言語ツールチェーン（Nim / Zig / MoonBit）は自動更新しません。**
+コンパイラのバージョンが勝手に上がるとプロジェクトが壊れるため、
+「新しい版があります」と**報告するだけ**にしてあります。上げたくなったら:
+
+```powershell
+choosenim update stable     # Nim
+zvm i --zls <version>       # Zig (zls も同時)
+moonup update               # MoonBit
+```
+
+machine スコープの更新（.NET SDK、VS Build Tools 等）は
+`scripts\modernize-dev-env.ps1` を管理者 PowerShell で手動実行してください。
+
+実装上の注意:
+
+- スケジューラは `-NoProfile` で起動するため、**プロファイル経由の fnm 初期化が効きません。**
+  そのままだと `node` / `npm` が見えず Node が更新されないので、
+  スクリプト内で `fnm env` を明示的に適用しています。
+- ログオントリガーは **`-User` の指定が必須**です。省略すると全ユーザー対象とみなされ、
+  管理者権限が無いと「アクセスが拒否されました」で登録に失敗します。
+- `winget upgrade --all` の終了コード `-1978335188`（ピン留めあり）は**失敗扱いしません**。
+  `GitHub.Copilot` を意図的にピンしているため、これが正常状態です。
+
+### ツールチェーンの更新（手動・要管理者）
 
 ```powershell
 # 管理者 PowerShell で
