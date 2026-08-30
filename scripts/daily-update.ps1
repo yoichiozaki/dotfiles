@@ -14,10 +14,13 @@
     Covered:
       * winget user-scope packages (CLI tools)
       * rustup, fnm (Node LTS), uv, uv tools, npm globals, cargo tools
-      * choosenim / zvm / moonup toolchains are CHECKED, not auto-upgraded:
-        a language version bump should be a deliberate act, so the script only
-        reports when a newer version exists.
+      * language toolchains: choosenim (Nim), zvm (Zig + matching zls),
+        moonup (MoonBit)
       * user PATH de-duplication (installers re-append their bin dir)
+
+.PARAMETER PinToolchains
+    Do NOT upgrade Nim / Zig / MoonBit, only report when a newer version
+    exists. Use this while a project needs a specific compiler version.
 
 .PARAMETER Install
     Register the scheduled task (daily, at logon+delay, only when idle-ish).
@@ -36,7 +39,8 @@
 param(
     [switch]$Install,
     [switch]$Uninstall,
-    [switch]$WhatIfOnly
+    [switch]$WhatIfOnly,
+    [switch]$PinToolchains
 )
 
 Set-StrictMode -Version Latest
@@ -239,20 +243,80 @@ Invoke-Step 'cargo tools' {
     Add-Result 'cargo tools' 'OK' ($crates -join ', ')
 }
 
-# --------------------------------------- language toolchains: report only ---
-# A language version bump can break a project, so surface it and let the user
-# decide rather than moving the compiler under their feet.
-Invoke-Step 'toolchain check' {
-    if (Test-Tool choosenim) {
-        $cur = (nim --version 2>$null | Select-Object -First 1) -replace '.*Version ([0-9.]+).*', '$1'
-        Add-Result 'nim' 'INFO' "$cur (upgrade: choosenim update stable)"
+# ------------------------------------------------- language toolchains ------
+# These are upgraded too, but each step keeps the OLD toolchain installed so a
+# bad release can be rolled back (choosenim <ver> / zvm use <ver> / moonup
+# default <ver>). Pass -PinToolchains to report only.
+
+Invoke-Step 'nim (choosenim)' {
+    if (-not (Test-Tool choosenim)) { Add-Result 'nim' 'SKIP' 'choosenim absent'; return }
+    $before = ((nim --version 2>$null | Select-Object -First 1) -replace '.*Version ([0-9.]+).*', '$1').Trim()
+    if ($PinToolchains) { Add-Result 'nim' 'PINNED' $before; return }
+
+    $out = choosenim update stable 2>&1 | Out-String
+    $after = ((nim --version 2>$null | Select-Object -First 1) -replace '.*Version ([0-9.]+).*', '$1').Trim()
+
+    if ($after -ne $before) { Add-Result 'nim' 'UPDATED' "$before -> $after"; return }
+
+    # choosenim ships its own unzip which cannot read current archives and dies
+    # with "Attempted to read past end of file". Fall back to downloading the
+    # release zip and expanding it into the toolchains dir ourselves.
+    if ($out -match 'corrupted zip|read past end of file') {
+        $want = ([regex]::Match($out, 'Nim (\d+\.\d+\.\d+)')).Groups[1].Value
+        if (-not $want -or $want -eq $before) { Add-Result 'nim' 'CURRENT' $before; return }
+        try {
+            $zip  = Join-Path $env:TEMP "nim-$want`_x64.zip"
+            $dest = Join-Path $HOME ".choosenim\toolchains\nim-$want"
+            Invoke-WebRequest "https://nim-lang.org/download/nim-$want`_x64.zip" -OutFile $zip -UseBasicParsing
+            if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
+            Expand-Archive -Path $zip -DestinationPath $env:TEMP -Force
+            Move-Item (Join-Path $env:TEMP "nim-$want") $dest -Force
+            Remove-Item $zip -Force -ErrorAction SilentlyContinue
+            choosenim $want 2>&1 | Out-Null
+            $after = ((nim --version 2>$null | Select-Object -First 1) -replace '.*Version ([0-9.]+).*', '$1').Trim()
+            if ($after -eq $want) { Add-Result 'nim' 'UPDATED' "$before -> $after (manual unzip)" }
+            else                  { Add-Result 'nim' 'FAIL' "could not switch to $want" }
+        }
+        catch { Add-Result 'nim' 'FAIL' $_.Exception.Message }
     }
-    if (Test-Tool zvm) {
-        Add-Result 'zig' 'INFO' "$(zig version 2>$null) (upgrade: zvm i --zls <ver>)"
-    }
-    if (Test-Tool moonup) {
-        Add-Result 'moonbit' 'INFO' 'upgrade: moonup update'
-    }
+    else { Add-Result 'nim' 'CURRENT' $before }
+}
+
+Invoke-Step 'zig (zvm)' {
+    if (-not (Test-Tool zvm)) { Add-Result 'zig' 'SKIP' 'zvm absent'; return }
+    $before = ((zig version 2>$null) -join '').Trim()
+    if ($PinToolchains) { Add-Result 'zig' 'PINNED' $before; return }
+
+    # zvm has no "upgrade" verb, so pick the newest tagged release ourselves.
+    # ls-remote is descending and includes a `master` dev line, hence the
+    # strict x.y.z filter.
+    $latest = zvm ls-remote 2>$null |
+              ForEach-Object { ($_ -split '\s+')[0] } |
+              Where-Object { $_ -match '^\d+\.\d+\.\d+$' } |
+              Sort-Object { [version]$_ } -Descending |
+              Select-Object -First 1
+
+    if (-not $latest)          { Add-Result 'zig' 'FAIL' 'could not read remote versions'; return }
+    if ($latest -eq $before)   { Add-Result 'zig' 'CURRENT' $before; return }
+
+    # --zls keeps the language server on the same version as the compiler,
+    # which zls requires.
+    zvm i --zls $latest 2>&1 | Out-Null
+    zvm use $latest 2>&1 | Out-Null
+    $after = ((zig version 2>$null) -join '').Trim()
+    if ($after -eq $latest) { Add-Result 'zig' 'UPDATED' "$before -> $after (zls matched)" }
+    else                    { Add-Result 'zig' 'FAIL' "wanted $latest, got '$after'" }
+}
+
+Invoke-Step 'moonbit (moonup)' {
+    if (-not (Test-Tool moonup)) { Add-Result 'moonbit' 'SKIP' 'moonup absent'; return }
+    $before = ((moon version 2>$null | Select-Object -First 1) -join '').Trim()
+    if ($PinToolchains) { Add-Result 'moonbit' 'PINNED' $before; return }
+
+    moonup update 2>&1 | Out-Null
+    $after = ((moon version 2>$null | Select-Object -First 1) -join '').Trim()
+    if ($after -ne $before) { Add-Result 'moonbit' 'UPDATED' "-> $after" }
+    else                    { Add-Result 'moonbit' 'CURRENT' $after }
 }
 
 # -------------------------------------------------------------- user PATH ---

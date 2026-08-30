@@ -48,10 +48,11 @@ dotfiles/
 ユーザースコープの更新は**スケジューラで自動化済み**です。UAC が出ないものだけを対象にしているので、無人で完走します。
 
 ```powershell
-.\scripts\daily-update.ps1            # 手動で今すぐ実行
+.\scripts\daily-update.ps1                # 手動で今すぐ実行
 .\scripts\daily-update.ps1 -WhatIfOnly
-.\scripts\daily-update.ps1 -Install   # タスク登録（実施済み）
-.\scripts\daily-update.ps1 -Uninstall # 解除
+.\scripts\daily-update.ps1 -PinToolchains # 言語は更新せず報告のみ
+.\scripts\daily-update.ps1 -Install       # タスク登録（実施済み）
+.\scripts\daily-update.ps1 -Uninstall     # 解除
 ```
 
 タスク名 `dotfiles-daily-update`、毎日 12:30（±5 分のゆらぎ）＋
@@ -68,17 +69,25 @@ PC が止まっていた場合に備えてログオン 10 分後にも実行。
 | uv | 本体 + `uv tool`（poetry 等） |
 | npm | グローバルパッケージ |
 | cargo | `cargo-binstall` で導入した CLI |
+| **Nim** | `choosenim update stable` |
+| **Zig** | `zvm` で最新安定版へ（**zls も同じ版に同期**） |
+| **MoonBit** | `moonup update` |
 | user PATH | 重複除去 |
 | `packages/` | manifest を再生成（差分は `git diff` で見える） |
 
-**言語ツールチェーン（Nim / Zig / MoonBit）は自動更新しません。**
-コンパイラのバージョンが勝手に上がるとプロジェクトが壊れるため、
-「新しい版があります」と**報告するだけ**にしてあります。上げたくなったら:
+**旧バージョンは削除されません**。問題があれば即座に戻せます:
 
 ```powershell
-choosenim update stable     # Nim
-zvm i --zls <version>       # Zig (zls も同時)
-moonup update               # MoonBit
+choosenim 2.2.8         # Nim
+zvm use 0.15.2          # Zig
+moonup default <ver>    # MoonBit
+```
+
+特定のコンパイラ版に固定したいプロジェクトを抱えている間は、
+言語ツールチェーンだけ更新対象から外せます:
+
+```powershell
+.\scripts\daily-update.ps1 -PinToolchains   # 報告のみ、更新しない
 ```
 
 machine スコープの更新（.NET SDK、VS Build Tools 等）は
@@ -93,6 +102,12 @@ machine スコープの更新（.NET SDK、VS Build Tools 等）は
   管理者権限が無いと「アクセスが拒否されました」で登録に失敗します。
 - `winget upgrade --all` の終了コード `-1978335188`（ピン留めあり）は**失敗扱いしません**。
   `GitHub.Copilot` を意図的にピンしているため、これが正常状態です。
+- **`zvm` に自己更新コマンドはありません。** `zvm ls-remote` は降順で
+  末尾に `master`（開発版）が混じるため、`x.y.z` 形式だけを抜き出して
+  最新安定版を判定しています。
+- **`choosenim` 内蔵の unzip は現行アーカイブを展開できません**
+  （`Attempted to read past end of file`）。このエラーを検出したら
+  公式 zip を取得して `Expand-Archive` で展開し直すフォールバックが働きます。
 
 ### ツールチェーンの更新（手動・要管理者）
 
