@@ -270,6 +270,8 @@ Write-Head 'Developer runtimes and CLI tools'
 # NOTE: GitHub.Copilot is deliberately EXCLUDED. winget's manifest lags behind
 # the CLI's own self-updater, so `winget upgrade` would DOWNGRADE the CLI.
 foreach ($p in @(
+    @{ Id = 'Git.Git';                            Label = 'Git' }
+    @{ Id = 'GitHub.cli';                         Label = 'GitHub CLI' }
     @{ Id = 'GoLang.Go';                          Label = 'Go' }
     @{ Id = 'Microsoft.PowerShell';               Label = 'PowerShell 7' }
     @{ Id = 'Microsoft.WSL';                      Label = 'WSL' }
@@ -282,6 +284,27 @@ foreach ($p in @(
     @{ Id = 'Microsoft.VCRedist.2015+.x64';       Label = 'VC++ Redist x64' }
     @{ Id = 'Microsoft.VCRedist.2015+.x86';       Label = 'VC++ Redist x86' }
 )) { Invoke-Winget -Id $p.Id -Label $p.Label }
+
+# ------------------------------------------------- Git's own auto-updater ---
+
+# Git for Windows installs a "Git for Windows Updater" scheduled task that runs
+# `git update-git-for-windows --gui` daily as the LOGGED-IN user. Because it is
+# not elevated it cannot write C:\Program Files\Git\etc\gitconfig, so it pops up
+# an installer and then reports "could not set the system config" every single
+# day. Git.Git is handled above with proper elevation instead, so silence it.
+Write-Head "Git's own updater (daily unelevated nag)"
+
+$gitTask = Get-ScheduledTask -TaskName 'Git for Windows Updater' -ErrorAction SilentlyContinue
+if (-not $gitTask) { Add-Result 'Git updater task' 'SKIP' 'not present' }
+elseif ($gitTask.State -eq 'Disabled') { Add-Result 'Git updater task' 'ALREADY' 'disabled' }
+elseif ($WhatIfOnly) { Add-Result 'Git updater task' 'WHATIF' 'would disable' }
+else {
+    try {
+        Disable-ScheduledTask -TaskName 'Git for Windows Updater' -ErrorAction Stop | Out-Null
+        Add-Result 'Git updater task' 'OK' 'disabled; Git.Git now updates via winget above'
+    }
+    catch { Add-Result 'Git updater task' 'FAIL' $_.Exception.Message }
+}
 
 # ------------------------------------------------------------------ Rust ----
 
@@ -381,8 +404,15 @@ Invoke-Winget  -Id 'Microsoft.OpenJDK.11' -Label 'Microsoft OpenJDK 11 (patch)'
 
 # ------------------------------------------------------------------- npm ----
 
+# Node is managed by fnm (per-user), not by winget, so npm does not exist in an
+# elevated -NoProfile shell. npm is updated by scripts\daily-update.ps1, which
+# activates fnm first. Skipping here keeps this script from dying at the very
+# end after all the real work succeeded.
 Write-Head 'npm self-update'
 if ($WhatIfOnly) { Add-Result 'npm' 'WHATIF' 'would self-update' }
+elseif (-not (Get-Command npm -CommandType Application -ErrorAction Ignore)) {
+    Add-Result 'npm' 'SKIP' 'fnm-managed; handled by daily-update.ps1'
+}
 else {
     $before = (& npm --version 2>&1 | Select-Object -First 1)
     & npm install -g npm@latest 2>&1 | Out-Null

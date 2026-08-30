@@ -309,6 +309,19 @@ Windows に存在しない `du` / `df` / `top` のみ関数として定義して
   その際シンボリックリンクが実ファイルに戻る可能性があります。
   そうなったら `.\install.ps1` を再実行すれば復旧します（冪等）。
 
+- **Git 自身の自動更新は無効化してあります。**
+  Git for Windows は「Git for Windows Updater」というタスクを作り、
+  毎日 `git update-git-for-windows --gui` を**ログインユーザー権限で**実行します。
+  昇格していないため `C:\Program Files\Git\etc\gitconfig` を書けず、
+  インストーラのポップアップを出したうえで
+  **「system config をセットできない」と毎日失敗**します。
+  `Git.Git` は `scripts\modernize-dev-env.ps1` が昇格して更新するので、
+  同スクリプトがこのタスクを無効化します。
+
+- **`npm` は昇格スクリプトでは更新しません。**
+  Node は fnm（ユーザー単位）管理なので、昇格 + `-NoProfile` のシェルからは
+  `npm` が見えません。npm の更新は `scripts\daily-update.ps1` の担当です。
+
 - **シンボリックリンクには Developer Mode か管理者権限が必要**です。
   `install.ps1` は最初に判定して、足りない場合は何もせず案内を出します。
   （設定 → システム → 開発者向け → 開発者モード）
