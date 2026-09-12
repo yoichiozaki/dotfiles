@@ -1,6 +1,6 @@
 {
   "logLevel": "all",
-  "model": "claude-opus-5",
+  "model": "gpt-6-astra",
   "contextTier": "long_context",
   "effortLevel": "max",
   "defaultMode": "autopilot",

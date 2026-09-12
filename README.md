@@ -152,6 +152,13 @@ machine スコープの更新（.NET SDK、VS Build Tools 等）は
 このマシンでは `Documents` が OneDrive にリダイレクトされているため、
 パスを決め打ちすると壊れるためです。
 
+### Copilot CLI の既定モデル
+
+`~\.copilot\settings.json` で、既定モデルを **GPT-6 Astra** (`gpt-6-astra`)、
+コンテキストを **1M** (`contextTier: long_context`)、
+推論強度を **Max** (`effortLevel: max`) に設定しています。
+セッションや起動オプションで個別に指定した設定がある場合は、そちらが優先されます。
+
 ---
 
 ## 設計方針
