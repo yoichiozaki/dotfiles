@@ -4,5 +4,8 @@
   "contextTier": "long_context",
   "effortLevel": "max",
   "defaultMode": "autopilot",
-  "defaultPermissionMode": "allow-all"
+  "defaultPermissionMode": "allow-all",
+  "enabledFeatureFlags": {
+    "COMPUTER_USE": true
+  }
 }

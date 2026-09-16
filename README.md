@@ -159,6 +159,12 @@ machine スコープの更新（.NET SDK、VS Build Tools 等）は
 推論強度を **Max** (`effortLevel: max`) に設定しています。
 セッションや起動オプションで個別に指定した設定がある場合は、そちらが優先されます。
 
+### Copilot CLI の computer-use
+
+`~\.copilot\settings.json` の `enabledFeatureFlags.COMPUTER_USE` を `true` に設定し、
+同梱の computer-use プラグインを有効化しています。CLI を再起動すると適用されます。
+状態確認や有効・無効の切り替えには `/computer` を使います。
+
 ---
 
 ## 設計方針
