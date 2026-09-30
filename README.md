@@ -1,5 +1,7 @@
 # dotfiles
 
+Windows 向けの手順は以下、macOS 向けは [macOS](#macos) を参照してください。
+
 Windows 開発環境の設定一式。**シンボリックリンク方式**なので、
 いつもの場所でファイルを編集すればそのままリポジトリが更新され、
 `git status` で「どこが素の状態から変わったか」が一目でわかります。
@@ -155,6 +157,9 @@ wslc system info
 wslc container list --all
 ```
 
+更新後はターミナルを開き直し、インストーラが追加した `C:\Program Files\WSL\` の
+PATH を読み込んでください。
+
 WSL の更新時は、作業を保存し、実行中のコンテナを安全に停止してから
 Docker Desktop 等を終了し、`wsl --shutdown` で WSL を停止してください。
 起動中の WSL サービスを停止できないと、更新が `1921` / `1603` で失敗する場合があります。
@@ -186,10 +191,15 @@ Docker Desktop の `docker compose` を使用します。
 
 ### Copilot CLI の既定モデル
 
-`~\.copilot\settings.json` で、既定モデルを **GPT-6 Astra** (`gpt-6-astra`)、
+`~\.copilot\settings.json` で、既定モデルを **Claude Opus 5.5** (`claude-opus-5.5`)、
 コンテキストを **1M** (`contextTier: long_context`)、
-推論強度を **Max** (`effortLevel: max`) に設定しています。
+推論強度を **MAX** (`effortLevel: max`) に設定しています。
+新しく起動するセッションの既定値として適用されます。
 セッションや起動オプションで個別に指定した設定がある場合は、そちらが優先されます。
+
+設定の実体は `config\copilot\settings.json` です。
+配置先がリンクではなく実ファイルになっていた場合は、追加設定を実体へ取り込んでから
+`install.ps1` でリンクを張り直してください。既存ファイルは `.backup` に退避されます。
 
 ### Copilot CLI の computer-use
 
@@ -406,3 +416,117 @@ Windows に存在しない `du` / `df` / `top` のみ関数として定義して
   既定は .NET 10 ですが、`global.json` で固定しているプロジェクトが
   ありうるため自動削除はしていません。整理する場合は
   `.\scripts\modernize-dev-env.ps1 -RemoveDuplicateDotnet6Sdks`。
+
+---
+
+## macOS
+
+Yoichi Ozaki's dotfiles for macOS.
+
+### Setup
+
+```bash
+xcode-select --install  # if not already installed
+git clone https://github.com/yoichiozaki/dotfiles ~/dotfiles
+~/dotfiles/install.sh
+```
+
+After installation:
+
+```bash
+gh auth login    # GitHub
+nvim             # installs plugins on first launch
+az login         # Azure
+aws configure    # AWS
+gcloud init      # GCP
+```
+
+### What's included
+
+#### Shell
+- **zsh** — autosuggestions, syntax highlighting, tab completion
+- **Starship** — prompt with git status, command duration, system info
+- **fzf** — fuzzy finder (`Ctrl+R` history, `Ctrl+T` file search)
+- **zoxide** — smart `cd` (`z <keyword>`)
+
+#### Editor & Terminal
+- **Neovim** — LSP, Catppuccin theme, Telescope, Neo-tree
+- **Ghostty** — Catppuccin Mocha, Hack Nerd Font, transparency
+- **tmux** — Catppuccin statusbar, vim keybindings
+
+#### Languages
+| Language | Version Manager |
+|----------|----------------|
+| Go | homebrew |
+| Node.js | mise |
+| TypeScript | npm global |
+| Python | mise |
+| Rust | rustup |
+| Zig | homebrew |
+| Nim | homebrew |
+
+#### Tools
+| Category | Tools |
+|----------|-------|
+| Git | git, gh, lazygit, git-lfs, delta, gnupg |
+| Containers | Docker Desktop, kubectl, k9s, helm, kubectx, stern |
+| Cloud | awscli, azure-cli, google-cloud-sdk, terraform, aztfexport |
+| CLI | eza, bat, fd, ripgrep, fzf, zoxide, btop, jq, xh, tldr |
+| DB | PostgreSQL, Redis (client tools), TablePlus |
+| API | grpcurl, mkcert, cloudflared |
+| Apps | VS Code, Rectangle, TablePlus |
+
+### Structure
+
+```
+dotfiles/
+├── install.sh              # setup script
+├── Brewfile                # all packages
+├── .zshrc
+├── .gitconfig
+├── .gitignore_global
+└── .config/
+    ├── ghostty/config
+    ├── starship.toml
+    ├── nvim/init.lua
+    └── tmux/tmux.conf
+```
+
+### Manual settings (not automated)
+
+These require manual setup via System Settings after installation.
+
+**Screenshot shortcuts** (System Settings → Keyboard → Keyboard Shortcuts → Screenshots)
+| Key | Action |
+|-----|--------|
+| `Cmd+Shift+S` | Copy selected area to clipboard |
+
+---
+
+### Key bindings
+
+#### Shell
+| Key | Action |
+|-----|--------|
+| `→` / `Ctrl+F` | Accept autosuggestion |
+| `Ctrl+R` | Fuzzy search history |
+| `Ctrl+T` | Fuzzy search files |
+| `Alt+C` | Fuzzy cd into directory |
+
+#### tmux (prefix: `Ctrl+A`)
+| Key | Action |
+|-----|--------|
+| `prefix + \|` | Split vertical |
+| `prefix + -` | Split horizontal |
+| `prefix + hjkl` | Navigate panes |
+| `prefix + r` | Reload config |
+
+#### Neovim (leader: `Space`)
+| Key | Action |
+|-----|--------|
+| `Space + ff` | Find files |
+| `Space + fg` | Live grep |
+| `Space + e` | File explorer |
+| `Space + /` | Toggle comment |
+| `gd` | Go to definition |
+| `K` | Hover docs |
