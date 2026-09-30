@@ -1,8 +1,8 @@
 rustup   stable-x86_64-pc-windows-msvc (default)
-fnm      v24.20.0
-nim      Nim Compiler Version 2.2.10 [Windows: amd64]
+fnm      v24.21.0
+nim      Nim Compiler Version 2.2.12 [Windows: amd64]
 zig      0.16.0
-moon     moon 0.1.20260827 (d0aaa07 2026-08-27)
+moon     moon 0.1.20260920 (914d7da 2026-09-20)
 go       go version go1.27.0 windows/amd64
-dotnet   10.0.400
+dotnet   10.0.401
 python   Python 3.13.15

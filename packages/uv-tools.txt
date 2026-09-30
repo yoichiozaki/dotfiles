@@ -1,1 +1,1 @@
-poetry v2.4.2
+poetry v2.5.1

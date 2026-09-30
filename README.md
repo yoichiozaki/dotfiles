@@ -136,6 +136,38 @@ machine スコープの更新（.NET SDK、VS Build Tools 等）は
   存在しないディレクトリは消しません（`~\.dotnet\tools` のように
   必要になった時点で作られる既知のパスがあるため）。
 
+### WSL Containers
+
+WSL に同梱される **`wslc.exe`**（別名 **`container.exe`**）で Linux コンテナを実行します。
+必要な WSL は **2.9.3 以降**、GA リリースは **3.0.1** です。
+別のコンテナエンジンをインストールする必要はありません。
+WSL 自体は `packages\winget.json` の `Microsoft.WSL` で復元対象になっています。
+
+```powershell
+# 管理者 PowerShell で更新（初回に WSL 自体がない場合は wsl --install --no-distribution）
+wsl --update
+wsl --version
+
+# 通常の PowerShell から利用
+wslc version
+wslc run --rm hello-world
+wslc system info
+wslc container list --all
+```
+
+WSL の更新時は、作業を保存し、実行中のコンテナを安全に停止してから
+Docker Desktop 等を終了し、`wsl --shutdown` で WSL を停止してください。
+起動中の WSL サービスを停止できないと、更新が `1921` / `1603` で失敗する場合があります。
+更新後は必要な WSL ディストリビューションと Docker Desktop を起動し直します。
+
+既存の **Docker Desktop / Ubuntu は残したまま併用**します。
+`docker` コマンドのエイリアスやコンテキストは変更しません。
+WSLc と Docker Desktop のイメージ・コンテナは別管理で、データは dotfiles に含めません。
+GA 時点では WSLc の Compose は未対応のため、既存の Compose 環境は引き続き
+Docker Desktop の `docker compose` を使用します。
+
+公式手順: [Get started with containers on WSL](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-containers)
+
 ### リンク対象
 
 | リポジトリ内 | 配置先 |

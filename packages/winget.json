@@ -61,6 +61,9 @@
           "PackageIdentifier": "Google.Chrome.EXE"
         },
         {
+          "PackageIdentifier": "Iriun.IriunWebcam"
+        },
+        {
           "PackageIdentifier": "Microsoft.Edge"
         },
         {
@@ -223,6 +226,9 @@
           "PackageIdentifier": "Microsoft.AppInstaller"
         },
         {
+          "PackageIdentifier": "Microsoft.365Copilot"
+        },
+        {
           "PackageIdentifier": "Microsoft.DotNet.Native.Runtime"
         },
         {
@@ -291,5 +297,5 @@
       }
     }
   ],
-  "WinGetVersion": "1.29.290"
+  "WinGetVersion": "1.29.380"
 }
